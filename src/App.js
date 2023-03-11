@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Helmet } from 'react-helmet';
 import "./App.css";
+
+const ROCKET_BASE = "http://192.168.0.11:8000";
+const ITEMS_BASE = `${ROCKET_BASE}/items`;
+// const cors = require('cors');
 
 function App() {
   const [items, setItems] = useState([]);
@@ -8,9 +11,14 @@ function App() {
 
   // function to fetch items from server
   async function fetchItems() {
-    const response = await fetch("http://localhost:8000/items");
+    const response = await fetch(ITEMS_BASE, {
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
+    });
     const data = await response.json();
-    setItems(data);
+    //reverse Items
+    setItems(data.reverse());
   }
 
   // fetch items on component mount
@@ -20,21 +28,22 @@ function App() {
 
   // function to add item to server
   async function addItem() {
-    const response = await fetch("http://localhost:8000/items", {
+    const response = await fetch(ITEMS_BASE, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
       },
       body: JSON.stringify({ title: inputText, completed: false })
     });
     const data = await response.json();
-    setItems(data);
+    setItems(data.reverse());
     setInputText("");
   }
 
   return (
     <div className="container">
-      <h1>To-Do List</h1>
+      <h1>Patxis and Aras Scheduler</h1>
       <input
         type="text"
         value={inputText}
@@ -45,7 +54,8 @@ function App() {
         {items.map(item => (
           <div>
           <li key={item.id}>{item.title}</li>
-          <iframe width="200" height="100" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          {/* add a random image  */}
+          <img src="https://picsum.photos/200/300" alt="random image" />
           </div>
         ))}
       </ul>
